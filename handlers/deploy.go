@@ -106,6 +106,7 @@ func MakeDeployHandler(functionNamespace string, factory k8s.FunctionFactory) ht
 
 func makeDeploymentSpec(request types.FunctionDeployment, existingSecrets map[string]*apiv1.Secret, factory k8s.FunctionFactory) (*appsv1.Deployment, error) {
 	envVars := buildEnvVars(&request)
+	privileged := !request.ReadOnlyRootFilesystem
 
 	initialReplicas := int32p(initialReplicasCount)
 	labels := map[string]string{
@@ -206,6 +207,7 @@ func makeDeploymentSpec(request types.FunctionDeployment, existingSecrets map[st
 							ReadinessProbe:  probes.Readiness,
 							SecurityContext: &corev1.SecurityContext{
 								ReadOnlyRootFilesystem: &request.ReadOnlyRootFilesystem,
+								Privileged: &privileged,
 							},
 						},
 					},

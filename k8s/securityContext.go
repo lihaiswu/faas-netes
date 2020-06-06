@@ -46,6 +46,8 @@ func (f *FunctionFactory) ConfigureReadOnlyRootFilesystem(request types.Function
 			ReadOnlyRootFilesystem: &request.ReadOnlyRootFilesystem,
 		}
 	}
+	privileged := !request.ReadOnlyRootFilesystem
+	deployment.Spec.Template.Spec.Containers[0].SecurityContext.Privileged = &privileged
 
 	existingVolumes := removeVolume("temp", deployment.Spec.Template.Spec.Volumes)
 	deployment.Spec.Template.Spec.Volumes = existingVolumes
